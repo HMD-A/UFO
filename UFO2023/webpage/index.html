@@ -1,0 +1,171 @@
+
+<html lang="ja">
+<title>UFO_controler</title>
+<meta charset="UTF-8">
+
+<head>
+<style>
+#show {
+        position: absolute; /*これは背景を設定してる*/
+        width: 20vw;
+        height: 10vw;
+        top: 1vw;
+        left: 1vw;
+        overflow-y: auto;
+        border: 1px solid #333;
+        background-color: hsl(0, 0%, 0%);
+}
+</style>
+</head>
+
+<body oncontextmenu="return false;">
+    <p id = "message"> こんにちは!!!!!</p>
+  
+    <img src="img/UFO2023_up.png" id="up" 
+          style="position:absolute; width: 30.0vw;height: 30.0vw; bottom:10.0vw; right:25.0vw;cursor:pointer;">
+      <img src="img/Roboism_logo.png" id="down" 
+          style="position:absolute; width: 25.0vw;height: 12.0vw; bottom:1.0vw; right:3.0vw;cursor:pointer;">
+      <img src="img/yellow_LOGO.png" id="left" 
+          style="position:absolute; width: 8.0vw;height: 8.0vw; bottom:20.0vw; right:58.0vw;cursor:pointer;">
+      <img src="img/UFO2023_right.png" id="right" 
+          style="position:absolute; width: 30.0vw;height: 30.0vw; bottom:10.0vw; right:70.0vw;cursor:pointer;">
+          <img src="img/YNU_LOGO.png" id="ynu" 
+          style="position:absolute; width: 12.0vw;height: 12.0vw; bottom:40.0vw; right:3.0vw;cursor:pointer;">
+        
+  
+  </body>
+  
+<script defer>
+  const dup   =document.getElementById('up');
+  const ddown =document.getElementById('down');
+  const dleft =document.getElementById('left');
+  const dright=document.getElementById('right');
+  const dynu  =document.getElementById('ynu');
+
+  var btn_array=[];
+
+  for(var i=0;i<5;i++){
+    btn_array[i]=0;
+  }
+
+
+
+
+  const url = new URL(document.location);
+    var addrIP = url.hostname//"127.0.0.1";
+    var addrPort = 50001;
+    var addr = 'ws://' + addrIP + ':' + addrPort + '/';
+
+    var wSck = new WebSocket(addr);// WebSocketオブジェクト生成;
+
+
+    addWSevent();
+    setInterval("sendT()", 10);
+    setInterval("SWconnect()", 100);
+
+    function SWconnect() {
+        if (wSck.readyState == 3) {
+            wSck.close();
+            wSck = new WebSocket(addr);// WebSocketオブジェクト生成?
+            addWSevent();
+        }
+    }
+
+    function addWSevent() {
+        wSck.onopen = function () {//ソケット接続時のアクション
+            document.getElementById('message').innerHTML = "ボタンは長押ししてね(^○^)/";
+           // setConnectionInfo();
+        };
+
+        wSck.onclose = function (e) {
+            wSck.close();
+           // setConnectionInfo();
+        };
+
+        wSck.onerror = function (e) {
+            wSck.close();
+            //setConnectionInfo();
+        };
+
+        wSck.onmessage = function (e) {//メ??セージを受け取ったとき???アクション
+           // setConnectionInfo();
+            //consoleAdd(e.data);
+        };
+    }
+
+
+    function sendT() {
+        if (wSck.readyState == 1) {
+            sendMsg = '';
+            sendMsg += btn_array[0] + " "; // up
+            sendMsg += btn_array[1] + " "; // down
+            sendMsg += btn_array[2] + " "; // left
+            sendMsg += btn_array[3] + " "; // right
+            sendMsg += btn_array[4] + " "; // ynu
+            
+
+            
+            wSck.send(sendMsg);
+        }
+    }
+
+
+dup.addEventListener('touchstart', () => {
+    document.getElementById('message').innerHTML = "Up_osareta";
+    event.preventDefault();
+    btn_array[0]=1;
+});
+
+dup.addEventListener('touchend', () => {
+    event.preventDefault();
+    btn_array[0]=0;
+});
+
+ddown.addEventListener('touchstart', () => {
+    document.getElementById('message').innerHTML = "Down_osareta";
+    event.preventDefault();
+    btn_array[1]=1;
+});
+
+ddown.addEventListener('touchend', () => {
+    event.preventDefault();
+    btn_array[1]=0;
+});
+
+dleft.addEventListener('touchstart', () => {
+   document.getElementById('message').innerHTML = "left_osareta";
+    event.preventDefault();
+    btn_array[2]=1;
+});
+
+dleft.addEventListener('touchend', () => {
+    event.preventDefault();
+    btn_array[2]=0;
+});
+
+dright.addEventListener('touchstart', () => {
+    document.getElementById('message').innerHTML = "right_osareta";
+    event.preventDefault();
+    btn_array[3]=1;
+});
+
+dright.addEventListener('touchend', () => {
+    event.preventDefault();
+    btn_array[3]=0;
+});
+
+dynu.addEventListener('touchstart', () => {
+    document.getElementById('message').innerHTML = "調整モード";
+    event.preventDefault();
+    btn_array[4]=1;
+});
+
+dynu.addEventListener('touchend', () => {
+    event.preventDefault();
+    btn_array[4]=0;
+});
+
+
+</script>
+
+</html>
